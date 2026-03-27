@@ -6,3 +6,4 @@ wordcloud
 matplotlib
 seaborn
 nltk
+flask
