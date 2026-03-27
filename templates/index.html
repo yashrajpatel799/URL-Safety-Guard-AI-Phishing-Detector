@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --sidebar-bg: #1a1d27;
+            --accent-blue: #4f46e5;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --status-green: #1e3a2f;
+            --status-text: #4ade80;
+            --danger-bg: #451a1a;
+            --danger-text: #f87171;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 40px 24px;
+            border-right: 1px solid #2d3139;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            background-color: var(--status-green);
+            color: var(--status-text);
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+
+        .recent-section h4 {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        /* Main Content */
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 10%;
+            position: relative;
+        }
+
+        .nav-icons {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            display: flex;
+            gap: 25px;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .header-wrap {
+            max-width: 900px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .brand i { color: #60a5fa; }
+
+        /* Form Styling */
+        .url-input {
+            width: 100%;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 18px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .url-input:focus { border-color: var(--accent-blue); }
+
+        .btn-submit {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover { background-color: #4338ca; }
+
+        /* Result Box */
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .result-good { background: var(--status-green); border-left: 5px solid var(--status-text); color: var(--status-text); }
+        .result-bad { background: var(--danger-bg); border-left: 5px solid var(--danger-text); color: var(--danger-text); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .heart { color: #f43f5e; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="section-label">System Status</div>
+        <div class="status-badge">
+            <span>🧠</span> Model Ready
+        </div>
+
+        <div class="recent-section">
+            <h4><i class="fas fa-scroll"></i> Recent Scans</h4>
+            <p style="color: #4b5563; font-size: 0.9rem;">No recent scans.</p>
+        </div>
+    </aside>
+
+    <main class="main-container">
+        <div class="nav-icons">
+          
+        </div>
+
+        <div class="header-wrap">
+            <div class="brand">
+                <i class="fas fa-shield-halved"></i>
+                <span>Phishing Detection AI</span>
+            </div>
+
+            <form action="/" method="POST">
+                <input type="text" name="url" class="url-input" placeholder="https://example-bank.com" required autocomplete="off">
+                <button type="submit" class="btn-submit">Analyze Link</button>
+            </form>
+
+            {% if predict %}
+                {% if "Phishing" in predict %}
+                    <div class="result-box result-bad">
+                        <strong><i class="fas fa-exclamation-triangle"></i> ALERT:</strong> {{ predict }}
+                    </div>
+                {% elif "healthy" in predict %}
+                    <div class="result-box result-good">
+                        <strong><i class="fas fa-check-circle"></i> SAFE:</strong> {{ predict }}
+                    </div>
+                {% else %}
+                    <div class="result-box" style="background: #334155;">
+                        {{ predict }}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <hr style="margin-top: 60px; border: 0.5px solid #2d3139;">
+        </div>
+
+        <footer class="footer">
+            Made with <span class="heart">❤</span> by Yash Raj Patel
+        </footer>
+    </main>
+
+</body>
+</html>
